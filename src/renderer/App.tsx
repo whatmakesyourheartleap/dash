@@ -833,23 +833,6 @@ export function App() {
     refreshGitStatus(activeTask.path);
   }
 
-  async function handleMergeToMain() {
-    if (!activeTask || !activeProject) return;
-    const res = await window.electronAPI.gitMergeToMain({
-      projectPath: activeProject.path,
-      taskBranch: activeTask.branch,
-      taskPath: activeTask.path,
-    });
-    if (!res.success) {
-      const conflicts = res.data?.conflicts;
-      if (conflicts && conflicts.length > 0) {
-        throw new Error(`Merge conflicts in: ${conflicts.join(', ')}`);
-      }
-      throw new Error(res.error || 'Merge failed');
-    }
-    refreshGitStatus(activeTask.path);
-  }
-
   async function handleDiscardFile(filePath: string) {
     if (!activeTask) return;
     await window.electronAPI.gitDiscardFile({ cwd: activeTask.path, filePath });
@@ -1064,9 +1047,6 @@ export function App() {
                   collapsed={changesPanelCollapsed}
                   onToggleCollapse={toggleChangesPanel}
                   onShowCommitGraph={() => setShowCommitGraph(true)}
-                  onMergeToMain={handleMergeToMain}
-                  activeTaskBranch={activeTask?.branch}
-                  activeTaskUseWorktree={activeTask?.useWorktree}
                 />
               </ShellDrawerWrapper>
             </Panel>

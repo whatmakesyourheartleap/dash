@@ -182,25 +182,12 @@ export function registerGitIpc(): void {
   );
 
   // Get detailed info for a single commit
-  ipcMain.handle('git:getCommitDetail', async (_event, args: { cwd: string; hash: string }) => {
-    try {
-      const data = await GitService.getCommitDetail(args.cwd, args.hash);
-      return { success: true, data };
-    } catch (error) {
-      return { success: false, error: String(error) };
-    }
-  });
-
-  // Merge a task branch into main
   ipcMain.handle(
-    'git:mergeToMain',
-    async (_event, args: { projectPath: string; taskBranch: string; taskPath: string }) => {
+    'git:getCommitDetail',
+    async (_event, args: { cwd: string; hash: string }) => {
       try {
-        const result = await GitService.mergeTaskToMain(args);
-        if (!result.success) {
-          return { success: false, error: result.error, data: { conflicts: result.conflicts } };
-        }
-        return { success: true };
+        const data = await GitService.getCommitDetail(args.cwd, args.hash);
+        return { success: true, data };
       } catch (error) {
         return { success: false, error: String(error) };
       }
